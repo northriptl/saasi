@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-#By: Tyler Northrip northrit@my.erau.edu
+#By: Tyler Northrip
 #This script configures ubuntu for optimal security
 #while running TOR and tests the connection. Run using sudo
 #DO NOT RUN AS ROOT!! USE SUDO
