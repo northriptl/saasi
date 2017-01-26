@@ -21,16 +21,16 @@ fi
 apt -qq remove firefox vino yelp gcc g++ cheese thunderbird cups ftp rsync ssh -y
 apt -qq autoremove -y
 
-#sysctl stuff INSERT EXPLANATION HERE
-/sbin/sysctl -w net.ipv4.conf.default.rp_filter=1
-/sbin/sysctl -w net.ipv4.conf.all.rp_filter=1
-/sbin/sysctl -w net.ipv4.tcp_syncookies=1
-/sbin/sysctl -w net.ipv4.conf.all.accept_redirects = 0
-/sbin/sysctl -w net.ipv6.conf.all.accept_redirects = 0
-/sbin/sysctl -w net.ipv4.conf.all.send_redirects = 0
-/sbin/sysctl -w net.ipv4.conf.all.accept_source_route = 0
-/sbin/sysctl -w net.ipv6.conf.all.accept_source_route = 0
-/sbin/sysctl -w net.ipv4.conf.all.log_martians = 1
+#Kernel network security settings
+/sbin/sysctl -w net.ipv4.conf.default.rp_filter=1 \
+net.ipv4.conf.all.rp_filter=1 \
+net.ipv4.tcp_syncookies=1 \
+net.ipv4.conf.all.accept_redirects=0 \
+net.ipv6.conf.all.accept_redirects=0 \
+net.ipv4.conf.all.send_redirects=0 \
+net.ipv4.conf.all.accept_source_route=0 \
+net.ipv6.conf.all.accept_source_route=0 \
+net.ipv4.conf.all.log_martians=1
 
 
 
