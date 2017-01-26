@@ -26,3 +26,8 @@ The goal of this script is to secure debian based linux boxes for TOR usage
 
     cd saasi
     git pull
+    
+# License
+
+The saasi script is under a MIT license because I can.
+Please see [LICENSE](LICENSE) for more details.
