@@ -10,16 +10,6 @@ if [[ $EUID -ne 0 ]]; then
    printf "Please run as root:\nsudo %s\n" "${0}"
    exit 1
 fi
- 
-#Remove packages to improve security and shrink attack surface
-#Firefox is not needed. TOR should be the only browser
-#gcc g++ are removed to prevent code being compiled locally
-#Cheese is removed to prevent easy access to webcam
-#Yelp, Thunderbird, cups, yelp removed to reduce attack surface
-#Vino removed since it is remote access software
-#ftp, rsync, ssh removed to prevent easy downloading of files
-apt -qq remove firefox vino yelp gcc g++ cheese thunderbird cups ftp rsync ssh -y
-apt -qq autoremove -y
 
 #Kernel network security settings
 /sbin/sysctl -w net.ipv4.conf.default.rp_filter=1 \
@@ -87,5 +77,15 @@ ufw enable
 { 
 	printf "Port 81 is blocked, firewall is functioning\n"
 }
+
+#Remove packages to improve security and shrink attack surface
+#Firefox is not needed. TOR should be the only browser
+#gcc g++ are removed to prevent code being compiled locally
+#Cheese is removed to prevent easy access to webcam
+#Yelp, Thunderbird, cups, yelp removed to reduce attack surface
+#Vino removed since it is remote access software
+#ftp, rsync, ssh, wget, curl removed to prevent easy downloading of files
+apt -qq remove firefox vino yelp gcc g++ cheese thunderbird cups ftp rsync ssh wget curl -y
+apt -qq autoremove -y
 
 printf "Script exiting\n"
