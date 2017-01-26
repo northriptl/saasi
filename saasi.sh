@@ -22,6 +22,9 @@ net.ipv4.conf.all.accept_source_route=0 \
 net.ipv6.conf.all.accept_source_route=0 \
 net.ipv4.conf.all.log_martians=1
 
+sh -c 'printf "kernel.kptr_restrict=1\nkernel.yama.ptrace_scope=1\nvm.mmap_min_addr=65536" > /etc/sysctl.conf'
+sh -c 'printf "net.ipv4.icmp_echo_ignore_broadcasts=1\nnet.ipv4.icmp_ignore_bogus_error_responses=1\nnet.ipv4.icmp_echo_ignore_all=0" > /etc/sysctl.conf'
+
 #Remove the guest user by editing lightdm
 sh -c 'printf "[SeatDefaults]\nallow-guest=false\n" > /etc/lightdm/lightdm.conf.d/50-no-guest.conf'
 
