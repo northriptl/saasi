@@ -1,6 +1,6 @@
-# SASSI
+# SAASI
 
-Script Aimed At Securing Installations
+Script Aimed At Securing Installs
 
 The goal of this script is to secure debian based linux boxes for TOR usage
 
@@ -22,3 +22,7 @@ The goal of this script is to secure debian based linux boxes for TOR usage
     wget https://raw.githubusercontent.com/northriptl/saasi/master/saasi.sh
     sudo bash saasi.sh
   
+# Update
+
+    cd saasi
+    git pull
