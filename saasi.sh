@@ -26,7 +26,7 @@ sh -c 'printf "kernel.kptr_restrict=1\nkernel.yama.ptrace_scope=1\nvm.mmap_min_a
 sh -c 'printf "net.ipv4.icmp_echo_ignore_broadcasts=1\nnet.ipv4.icmp_ignore_bogus_error_responses=1\nnet.ipv4.icmp_echo_ignore_all=0" > /etc/sysctl.conf'
 
 #reload sysctl
-sysctl-p
+sysctl -p
 
 
 #Remove the guest user by editing lightdm
@@ -85,6 +85,10 @@ ufw enable
 { 
 	printf "Port 81 is blocked, firewall is functioning\n"
 }
+
+#Remove ufw dns rules, since tor does not require it. I know its ugly but it works
+ufw delete allow out 53/tcp
+ufw delete allow out 53/udp
 
 #Remove packages to improve security and shrink attack surface
 #Firefox is not needed. TOR should be the only browser
