@@ -22,7 +22,8 @@ net.ipv4.conf.all.accept_source_route=0 \
 net.ipv6.conf.all.accept_source_route=0 \
 net.ipv4.conf.all.log_martians=1
 
-
+#Remove the guest user by editing lightdm
+sh -c 'printf "[SeatDefaults]\nallow-guest=false\n" > /etc/lightdm/lightdm.conf.d/50-no-guest.conf'
 
 #Reset the ufw config
 ufw --force reset
