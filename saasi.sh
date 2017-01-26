@@ -25,6 +25,10 @@ net.ipv4.conf.all.log_martians=1
 sh -c 'printf "kernel.kptr_restrict=1\nkernel.yama.ptrace_scope=1\nvm.mmap_min_addr=65536" > /etc/sysctl.conf'
 sh -c 'printf "net.ipv4.icmp_echo_ignore_broadcasts=1\nnet.ipv4.icmp_ignore_bogus_error_responses=1\nnet.ipv4.icmp_echo_ignore_all=0" > /etc/sysctl.conf'
 
+#reload sysctl
+sysctl-p
+
+
 #Remove the guest user by editing lightdm
 sh -c 'printf "[SeatDefaults]\nallow-guest=false\n" > /etc/lightdm/lightdm.conf.d/50-no-guest.conf'
 
@@ -92,4 +96,5 @@ ufw enable
 apt -qq remove firefox vino yelp gcc g++ cheese thunderbird cups ftp rsync ssh wget curl -y
 apt -qq autoremove -y
 
-printf "Script exiting\n"
+printf "Script exiting\nIt is strongly recommended to reboot after running this script\n"
+
