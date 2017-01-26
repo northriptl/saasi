@@ -86,9 +86,6 @@ ufw enable
 	printf "Port 81 is blocked, firewall is functioning\n"
 }
 
-#Remove ufw dns rules, since tor does not require it. I know its ugly but it works
-ufw delete allow out 53/tcp
-ufw delete allow out 53/udp
 
 #Remove packages to improve security and shrink attack surface
 #Firefox is not needed. TOR should be the only browser
