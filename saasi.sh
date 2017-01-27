@@ -138,10 +138,12 @@ main(){
 	firewall
 	remove_guest
 	
+	printf "\n"
+	
 	#Ask to do firewall test
 	while true 
 		do
-    		read -p "\nDo you wish to perform a simple firewall test? y/n: " yn
+    		read -p "Do you wish to perform a simple firewall test? y/n: " yn
     		case $yn in
         		[Yy]* ) printf "\n"; firewall_test; break;;
         		[Nn]* ) break;;
