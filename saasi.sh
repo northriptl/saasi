@@ -160,10 +160,8 @@ main(){
 	done
 	}
 	
+	printf "Script exiting\nIt is strongly recommended to reboot after running this script\n"
+	
 } #End main
 
 main
-
-
-printf "Script exiting\nIt is strongly recommended to reboot after running this script\n"
-
