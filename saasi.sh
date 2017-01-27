@@ -141,9 +141,9 @@ main(){
 	#Ask to do firewall test
 	while true 
 		do
-    		read -p "Do you wish to perform a simple firewall test? y/n: " yn
+    		read -p "\nDo you wish to perform a simple firewall test? y/n: " yn
     		case $yn in
-        		[Yy]* ) printf"\n"; firewall_test; break;;
+        		[Yy]* ) printf "\n"; firewall_test; break;;
         		[Nn]* ) break;;
         		* ) echo "Please answer yes or no.";;
     		esac
