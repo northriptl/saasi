@@ -11,6 +11,7 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+sysctl(){
 #Kernel network security settings
 /sbin/sysctl -w net.ipv4.conf.default.rp_filter=1 \
 net.ipv4.conf.all.rp_filter=1 \
@@ -27,11 +28,14 @@ sh -c 'printf "net.ipv4.icmp_echo_ignore_broadcasts=1\nnet.ipv4.icmp_ignore_bogu
 
 #reload sysctl
 sysctl -p
+} #End sysctl
 
-
+remove_guest(){
 #Remove the guest user by editing lightdm
 sh -c 'printf "[SeatDefaults]\nallow-guest=false\n" > /etc/lightdm/lightdm.conf.d/50-no-guest.conf'
+} #End remove_guest
 
+firewall(){
 #Reset the ufw config
 ufw --force reset
          
@@ -68,7 +72,9 @@ ufw allow out 53/udp
 ufw disable
 ufw enable
 
+} #End Firewall
 
+firewall_test(){
 #The below code attempts to connect to a webpage via ports 80,81
 #if the attempt fails, the print statement is executed. If the firewall
 #is functioning as configure, only the second print statement should execute
@@ -86,7 +92,9 @@ ufw enable
 	printf "Port 81 is blocked, firewall is functioning\n"
 }
 
+} #End firewall_test
 
+packages(){
 #Remove packages to improve security and shrink attack surface
 #Firefox is not needed. TOR should be the only browser
 #gcc g++ are removed to prevent code being compiled locally
@@ -96,6 +104,8 @@ ufw enable
 #ftp, rsync, ssh, wget, curl removed to prevent easy downloading of files
 apt -qq remove firefox vino yelp gcc g++ cheese thunderbird cups ftp rsync ssh wget curl -y
 apt -qq autoremove -y
+
+} #End packages
 
 printf "Script exiting\nIt is strongly recommended to reboot after running this script\n"
 
