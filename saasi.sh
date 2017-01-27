@@ -143,7 +143,7 @@ main(){
 		do
     		read -p "Do you wish to perform a simple firewall test? y/n: " yn
     		case $yn in
-        		[Yy]* ) firewall_test; break;;
+        		[Yy]* ) printf"\n"; firewall_test; break;;
         		[Nn]* ) break;;
         		* ) echo "Please answer yes or no.";;
     		esac
@@ -161,7 +161,7 @@ main(){
 	done
 	
 	
-	printf "Script exiting\nIt is strongly recommended to reboot after running this script\n"
+	printf "\nScript exiting\nIt is strongly recommended to reboot after running this script\n"
 	
 } #End main
 
