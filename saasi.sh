@@ -14,23 +14,23 @@ fi
 #DO NOT TOUCH THIS CODE
 #CONTAINS MAGIC
 greeter(){  
-read -d '' help <<- EOF
-. _____                    _____ _____ 
- / ____|  /\\\        /\\\    / ____|_   _|
- |(___   /  \\\      /  \\\  | (___   | |  
- \\\___ \\\ / /\\\ \\\    / /\\\ \\\  \\\___ \\\  | |  
- ____) / ____ \\\  / ____ \\\ ____) |_| |_ 
-|_____/_/    \\\_\\\/_/    \\\_\\\_____/|_____|
-"Script Aimed At Securing Installs"
+	read -d '' help <<- EOF
+	. _____                    _____ _____ 
+	 / ____|  /\\\        /\\\    / ____|_   _|
+	 |(___   /  \\\      /  \\\  | (___   | |  
+	 \\\___ \\\ / /\\\ \\\    / /\\\ \\\  \\\___ \\\  | |  
+	 ____) / ____ \\\  / ____ \\\ ____) |_| |_ 
+	|_____/_/    \\\_\\\/_/    \\\_\\\_____/|_____|
+	"Script Aimed At Securing Installs"
 
-Dev: Tyler Northrip
-Version: 0.1                   
-EOF
+	Dev: Tyler Northrip
+	Version: 0.1                   
+	EOF
 
-echo "$help" 
+	echo "$help" 
 }
 
-sysctl(){
+sysctl_fixes(){
 	#Kernel network security settings
 	sysctl -w net.ipv4.conf.default.rp_filter=1 
 	sysctl -w net.ipv4.conf.all.rp_filter=1 
@@ -134,7 +134,7 @@ main(){
 	printf "Press enter to continue"
 	read continue
 	
-	sysctl
+	sysctl_fixes
 	firewall
 	remove_guest
 	
