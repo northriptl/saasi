@@ -31,98 +31,98 @@ echo "$help"
 }
 
 sysctl(){
-#Kernel network security settings
-/sbin/sysctl -w net.ipv4.conf.default.rp_filter=1 
-/sbin/sysctl -w net.ipv4.conf.all.rp_filter=1 
-/sbin/sysctl -w net.ipv4.tcp_syncookies=1 
-/sbin/sysctl -w net.ipv4.conf.all.accept_redirects=0 
-/sbin/sysctl -w net.ipv6.conf.all.accept_redirects=0 
-/sbin/sysctl -w net.ipv4.conf.all.send_redirects=0 
-/sbin/sysctl -w net.ipv4.conf.all.accept_source_route=0 
-/sbin/sysctl -w net.ipv6.conf.all.accept_source_route=0 
-/sbin/sysctl -w net.ipv4.conf.all.log_martians=1
+	#Kernel network security settings
+	sysctl -w net.ipv4.conf.default.rp_filter=1 
+	sysctl -w net.ipv4.conf.all.rp_filter=1 
+	sysctl -w net.ipv4.tcp_syncookies=1 
+	sysctl -w net.ipv4.conf.all.accept_redirects=0 
+	sysctl -w net.ipv6.conf.all.accept_redirects=0 
+	sysctl -w net.ipv4.conf.all.send_redirects=0 
+	sysctl -w net.ipv4.conf.all.accept_source_route=0 
+	sysctl -w net.ipv6.conf.all.accept_source_route=0 
+	sysctl -w net.ipv4.conf.all.log_martians=1
 
-sh -c 'printf "kernel.kptr_restrict=1\nkernel.yama.ptrace_scope=1\nvm.mmap_min_addr=65536" > /etc/sysctl.conf'
-sh -c 'printf "net.ipv4.icmp_echo_ignore_broadcasts=1\nnet.ipv4.icmp_ignore_bogus_error_responses=1\nnet.ipv4.icmp_echo_ignore_all=0" > /etc/sysctl.conf'
+	#sh -c 'printf "kernel.kptr_restrict=1\nkernel.yama.ptrace_scope=1\nvm.mmap_min_addr=65536" > /etc/sysctl.conf'
+	#sh -c 'printf "net.ipv4.icmp_echo_ignore_broadcasts=1\nnet.ipv4.icmp_ignore_bogus_error_responses=1\nnet.ipv4.icmp_echo_ignore_all=0" > /etc/sysctl.conf'
 
-#reload sysctl
-sysctl -p
+	#reload sysctl
+	sysctl -p
 } #End sysctl
 
 remove_guest(){
-#Remove the guest user by editing lightdm
-sh -c 'printf "[SeatDefaults]\nallow-guest=false\n" > /etc/lightdm/lightdm.conf.d/50-no-guest.conf'
+	#Remove the guest user by editing lightdm
+	sh -c 'printf "[SeatDefaults]\nallow-guest=false\n" > /etc/lightdm/lightdm.conf.d/50-no-guest.conf'
 } #End remove_guest
 
 firewall(){
-#Reset the ufw config
-ufw --force reset
-         
-#Deny all incoming traffic and outgoing traffic
-ufw default deny incoming
-ufw default deny outgoing
- 
-#Allow out HTTP traffic (unencrypted web pages)
-ufw allow out 80/tcp
-ufw allow out 80/udp
- 
-#Allow out HTTPS traffic (encrypted web pages)
-ufw allow out 443/tcp
-ufw allow out 443/udp
+	#Reset the ufw config
+	ufw --force reset
 
-#Allow out dns, neccesary for the connection test to succeed. TOR does NOT need dns to function
-ufw allow out 53/tcp
-ufw allow out 53/udp
+	#Deny all incoming traffic and outgoing traffic
+	ufw default deny incoming
+	ufw default deny outgoing
 
-#If you need to download a file using ftp, copy the
-#following lines into a terminal
-#sudo ufw allow out 20,21/tcp
-#Sudo ufw allow out 20,21/udp
+	#Allow out HTTP traffic (unencrypted web pages)
+	ufw allow out 80/tcp
+	ufw allow out 80/udp
 
-#The below code backs up the old before.rules and copies the modified one over
-{ 
-	cp /etc/ufw/before.rules /etc/ufw/before.rules.old && cp ./before.rules /etc/ufw/before.rules
-} ||
-{ 
-	printf "Please make sure that before.rules is in the same folder as this script\n"
-}
+	#Allow out HTTPS traffic (encrypted web pages)
+	ufw allow out 443/tcp
+	ufw allow out 443/udp
 
-#Reload the firewall
-ufw disable
-ufw enable
+	#Allow out dns, neccesary for the connection test to succeed. TOR does NOT need dns to function
+	ufw allow out 53/tcp
+	ufw allow out 53/udp
+
+	#If you need to download a file using ftp, copy the
+	#following lines into a terminal
+	#sudo ufw allow out 20,21/tcp
+	#Sudo ufw allow out 20,21/udp
+
+	#The below code backs up the old before.rules and copies the modified one over
+	{ 
+		cp /etc/ufw/before.rules /etc/ufw/before.rules.old && cp ./before.rules /etc/ufw/before.rules
+	} ||
+	{ 
+		printf "Please make sure that before.rules is in the same folder as this script\n"
+	}
+
+	#Reload the firewall
+	ufw disable
+	ufw enable
 
 } #End Firewall
 
 firewall_test(){
-#The below code attempts to connect to a webpage via ports 80,81
-#if the attempt fails, the print statement is executed. If the firewall
-#is functioning as configure, only the second print statement should execute
-{ 
-	wget -qO- --tries=1 --timeout=5 portquiz.net:80 
-} || 
-{ 
-	printf "Please check your connection, port 80 failed\n"
-}
+	#The below code attempts to connect to a webpage via ports 80,81
+	#if the attempt fails, the print statement is executed. If the firewall
+	#is functioning as configure, only the second print statement should execute
+	{ 
+		wget -qO- --tries=1 --timeout=5 portquiz.net:80 
+	} || 
+	{ 
+		printf "Please check your connection, port 80 failed\n"
+	}
 
-{ 
-	wget -qO- --tries=1 --timeout=5 portquiz.net:81
-} || 
-{ 
-	printf "Port 81 is blocked, firewall is functioning\n"
-}
+	{ 
+		wget -qO- --tries=1 --timeout=5 portquiz.net:81
+	} || 
+	{ 
+		printf "Port 81 is blocked, firewall is functioning\n"
+	}
 
 } #End firewall_test
 
 packages(){
-#Remove packages to improve security and shrink attack surface
-#Firefox is not needed. TOR should be the only browser
-#gcc g++ are removed to prevent code being compiled locally
-#Cheese is removed to prevent easy access to webcam
-#Yelp, Thunderbird, cups, yelp removed to reduce attack surface
-#Vino removed since it is remote access software
-#ftp, rsync, ssh, wget, curl removed to prevent easy downloading of files
-apt -qq remove firefox vino yelp gcc g++ cheese thunderbird cups ftp rsync ssh wget curl -y
-apt -qq autoremove -y
+	#Remove packages to improve security and shrink attack surface
+	#Firefox is not needed. TOR should be the only browser
+	#gcc g++ are removed to prevent code being compiled locally
+	#Cheese is removed to prevent easy access to webcam
+	#Yelp, Thunderbird, cups, yelp removed to reduce attack surface
+	#Vino removed since it is remote access software
+	#ftp, rsync, ssh, wget, curl removed to prevent easy downloading of files
+	apt -qq remove firefox vino yelp gcc g++ cheese thunderbird cups ftp rsync ssh wget curl -y
+	apt -qq autoremove -y
 
 } #End packages
 
@@ -134,7 +134,7 @@ main(){
 	printf "Press enter to continue"
 	read continue
 	
-	#sysctl
+	sysctl
 	firewall
 	remove_guest
 	
