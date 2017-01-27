@@ -11,6 +11,28 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+#DO NOT TOUCH THIS CODE
+#CONTAINS MAGIC
+greeter(){  
+read -d '' help <<- EOF
+. _____                    _____ _____ 
+ / ____|  /\\\        /\\\    / ____|_   _|
+| (___   /  \\\      /  \\\  | (___   | |  
+ \\\___ \\\ / /\\\ \\\    / /\\\ \\\  \\\___ \\\  | |  
+ ____) / ____ \\\  / ____ \\\ ____) |_| |_ 
+|_____/_/    \\\_\\\/_/    \\\_\\\_____/|_____|
+"Script Aimed At Securing Installs"
+
+Dev: Tyler Northrip
+Version: 0.1                   
+EOF
+
+echo "$help" 
+}
+
+
+
+
 sysctl(){
 #Kernel network security settings
 /sbin/sysctl -w net.ipv4.conf.default.rp_filter=1 \
@@ -106,6 +128,18 @@ apt -qq remove firefox vino yelp gcc g++ cheese thunderbird cups ftp rsync ssh w
 apt -qq autoremove -y
 
 } #End packages
+
+main(){
+	greeter
+	sysctl
+	firewall
+	remove_guest
+	packages
+	firewall_test
+} #End main
+
+main
+
 
 printf "Script exiting\nIt is strongly recommended to reboot after running this script\n"
 
