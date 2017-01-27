@@ -144,7 +144,7 @@ main(){
     		read -p "Do you wish to perform a simple firewall test? y/n: " yn
     		case $yn in
         		[Yy]* ) firewall_test; break;;
-        		[Nn]* ) printf "fuck"; exit;;
+        		[Nn]* ) break;;
         		* ) echo "Please answer yes or no.";;
     		esac
 	done
@@ -155,7 +155,7 @@ main(){
     		read -p "Do you wish to remove unneeded/dangerous packages? y/n: " yn
     		case $yn in
         		[Yy]* ) packages; break;;
-        		[Nn]* ) printf "fuck"; exit;;
+        		[Nn]* ) break;;
         		* ) echo "Please answer yes or no.";;
     		esac
 	done
