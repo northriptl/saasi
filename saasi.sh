@@ -30,9 +30,6 @@ EOF
 echo "$help" 
 }
 
-
-
-
 sysctl(){
 #Kernel network security settings
 /sbin/sysctl -w net.ipv4.conf.default.rp_filter=1 \
@@ -131,11 +128,38 @@ apt -qq autoremove -y
 
 main(){
 	greeter
+	
+	#Main functions
+	printf"The program will now do general security fixes\n"
+	printf"Press enter to continue"
+	read continue
+	
 	sysctl
 	firewall
 	remove_guest
-	packages
-	firewall_test
+	
+	#Ask to do firewall test
+	{while true; do
+    		read -p "Do you wish to perform a simple firewall test? y/n: " yn
+    		case $yn in
+        		[Yy]* ) firewall_test; break;;
+        		[Nn]* ) printf "fuck"; exit;;
+        		* ) echo "Please answer yes or no.";;
+    		esac
+	done
+	}
+	
+	#Ask to remove packages
+	{while true; do
+    		read -p "Do you wish to remove unneeded/dangerous packages? y/n: " yn
+    		case $yn in
+        		[Yy]* ) packages; break;;
+        		[Nn]* ) printf "fuck"; exit;;
+        		* ) echo "Please answer yes or no.";;
+    		esac
+	done
+	}
+	
 } #End main
 
 main
