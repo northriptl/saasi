@@ -130,8 +130,8 @@ main(){
 	greeter
 	
 	#Main functions
-	printf"The program will now do general security fixes\n"
-	printf"Press enter to continue"
+	printf "The program will now do general security fixes\n"
+	printf "Press enter to continue"
 	read continue
 	
 	sysctl
