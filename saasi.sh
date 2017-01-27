@@ -51,6 +51,12 @@ remove_guest(){
 	sh -c 'printf "[SeatDefaults]\nallow-guest=false\n" > /etc/lightdm/lightdm.conf.d/50-no-guest.conf'
 } #End remove_guest
 
+mac_fix(){
+	read -p "Select yes when the install asks"
+	apt install macchanger macchanger-gtk -y
+} #End mac_fix
+
+
 firewall(){
 	#Reset the ufw config
 	ufw --force reset
@@ -136,7 +142,6 @@ main(){
 	remove_guest
 	
 	printf "\n"
-	
 	#Ask to do firewall test
 	while true 
 		do
@@ -149,7 +154,6 @@ main(){
 	done
 	
 	printf "\n"
-	
 	#Ask to remove packages
 	while true 
 		do
@@ -161,6 +165,17 @@ main(){
     		esac
 	done
 	
+	printf "\n"
+	#Ask to install macchanger
+	while true 
+		do
+    		read -p "Would you like to install macchanger (recommended)? y/n: " yn
+    		case $yn in
+        		[Yy]* ) printf "\n"; mac_fix; break;;
+        		[Nn]* ) break;;
+        		* ) echo "Please answer yes or no.";;
+    		esac
+	done
 	
 	printf "\nScript exiting\nIt is strongly recommended to reboot after running this script\n"
 	
