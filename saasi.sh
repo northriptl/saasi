@@ -139,7 +139,8 @@ main(){
 	remove_guest
 	
 	#Ask to do firewall test
-	{while true; do
+	while true 
+		do
     		read -p "Do you wish to perform a simple firewall test? y/n: " yn
     		case $yn in
         		[Yy]* ) firewall_test; break;;
@@ -147,10 +148,10 @@ main(){
         		* ) echo "Please answer yes or no.";;
     		esac
 	done
-	}
 	
 	#Ask to remove packages
-	{while true; do
+	while true 
+		do
     		read -p "Do you wish to remove unneeded/dangerous packages? y/n: " yn
     		case $yn in
         		[Yy]* ) packages; break;;
@@ -158,7 +159,7 @@ main(){
         		* ) echo "Please answer yes or no.";;
     		esac
 	done
-	}
+	
 	
 	printf "Script exiting\nIt is strongly recommended to reboot after running this script\n"
 	
