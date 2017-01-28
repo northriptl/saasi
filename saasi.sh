@@ -61,6 +61,11 @@ usb_disable(){
 	echo "blacklist usb-storage" >> /etc/modprobe.d/blacklist.conf
 } #End usb_disable
 
+firewire_disable(){
+	echo "blacklist firewire-ohci" >> /etc/modprobe.d/blacklist-firewire.conf
+	echo "blacklist firewire-sbp2" >> /etc/modprobe.d/blacklist-firewire.conf
+} #End firewire_disable
+
 firewall(){
 	#Reset the ufw config
 	ufw --force reset
@@ -188,6 +193,18 @@ main(){
     		read -p "Would you like to disable all usb ports (recommended only for VM)? y/n: " yn
     		case $yn in
         		[Yy]* ) printf "\n"; usb_disable; break;;
+        		[Nn]* ) break;;
+        		* ) echo "Please answer yes or no.";;
+    		esac
+	done
+	
+	printf "\n"
+	#Ask to install macchanger
+	while true 
+		do
+    		read -p "Would you like to disable firewire? y/n: " yn
+    		case $yn in
+        		[Yy]* ) printf "\n"; firewire_disable; break;;
         		[Nn]* ) break;;
         		* ) echo "Please answer yes or no.";;
     		esac
