@@ -52,7 +52,7 @@ remove_guest(){
 } #End remove_guest
 
 mac_fix(){
-	read -p "Select yes when the install asks"
+	read -p "please select yes when the install asks (press enter to continue)"
 	apt install macchanger macchanger-gtk -y
 } #End mac_fix
 
