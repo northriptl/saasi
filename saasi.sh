@@ -56,6 +56,10 @@ mac_fix(){
 	apt install macchanger macchanger-gtk -y
 } #End mac_fix
 
+usb_disable(){
+	echo '2-1' | tee /sys/bus/usb/drivers/usb/unbind
+	echo "blacklist usb-storage" >> /etc/modprobe.d/blacklist.conf
+} #End usb_disable
 
 firewall(){
 	#Reset the ufw config
@@ -172,6 +176,18 @@ main(){
     		read -p "Would you like to install macchanger (recommended)? y/n: " yn
     		case $yn in
         		[Yy]* ) printf "\n"; mac_fix; break;;
+        		[Nn]* ) break;;
+        		* ) echo "Please answer yes or no.";;
+    		esac
+	done
+	
+	printf "\n"
+	#Ask to install macchanger
+	while true 
+		do
+    		read -p "Would you like to disable all usb ports (recommended only for VM)? y/n: " yn
+    		case $yn in
+        		[Yy]* ) printf "\n"; usb_disable; break;;
         		[Nn]* ) break;;
         		* ) echo "Please answer yes or no.";;
     		esac
