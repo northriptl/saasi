@@ -153,6 +153,24 @@ install_rkhunter(){
             fi
 } #End install_rkhunter
 
+secure_fstab(){
+            echo "$LogTime uss: [$UserName] Check if shared memory is secured" >> $LogFile          
+            # Make sure fstab does not already contain a tmpfs reference
+            fstab=$(grep -c "tmpfs" /etc/fstab)
+            if [ ! "$fstab" -eq "0" ] 
+              then
+                 echo "$LogTime uss: [$UserName] fstab already contains a tmpfs partition." >> $LogFile
+            fi
+            if [ "$fstab" -eq "0" ]
+              then
+                 echo "$LogTime uss: [$UserName] fstab being updated to secure shared memory" >> $LogFile
+                 sudo echo "# $TFCName Script Entry - Secure Shared Memory - $LogTime" >> /etc/fstab
+                 sudo echo "tmpfs     /dev/shm     tmpfs     defaults,noexec,nosuid     0     0" >> /etc/fstab
+                 echo "$LogTime uss: [$UserName] Shared memory secured. Reboot required" >> $LogFile
+      	    fi
+  		
+} #End secure_fstab
+
 firewall_test(){
 	#The below code attempts to connect to a webpage via ports 80,81
 	#if the attempt fails, the print statement is executed. If the firewall
@@ -251,15 +269,16 @@ terminal_only(){
 
 gui_plus(){
     response=$(zenity --list --checklist --title="SAASI $Version" --column=Boxes --column=Selections --text="Select the security features you want" --width 480 --height 550 \
-    FALSE " 1. Apply sysctl changes" \
-    FALSE " 2. Remove guest account" \
-    FALSE " 3. Install macchanger" \
+    TRUE " 1. Apply sysctl changes" \
+    TRUE " 2. Remove guest account" \
+    TRUE " 3. Install macchanger" \
     FALSE " 4. Disable usb ports" \
     FALSE " 5. Disable firewire" \
-    FALSE " 6. Install/configure ufw" \
-    FALSE " 7. Uninstall packages" \
-    FALSE " 8. Install rkhunter" \
-    FALSE " 9. Test firewall?" \
+    TRUE " 6. Install/configure ufw" \
+    TRUE " 7. Uninstall packages" \
+    TRUE " 8. Install rkhunter" \
+    TRUE " 9. Secure shared memory" \
+    TRUE "10. Test firewall?" \
     --separator=':')
 
     if [ -z "$response" ] ; then
@@ -319,12 +338,20 @@ gui_plus(){
                     packages >> $LogFile
                 fi
         option=$(echo $response | grep -c "8.")
-	    	if [ "$option" -eq "1"]
-	    		then
-		    		#logging done inside function
-		    		install_rkhunter
+	    if [ "$option" -eq "1"]
+	    	then
+		    #logging done inside function
+		    install_rkhunter
             	fi
-        option=$(echo $response | grep -c "9.")
+		
+	option=$(echo $response | grep -c "9.")
+	    if [ "$option" -eq "1"]
+	    	then
+		    #logging done inside function
+		    secure_fstab
+            	fi
+		
+        option=$(echo $response | grep -c "10.")
             if [ "$option" -eq "1" ]  
                 then
                     firewall_test | zenity --text-info --title="Firewall Test" --width 400 --height 200
