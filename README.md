@@ -17,12 +17,12 @@ I recommend using git because I have included additional files in this repo that
 
     git clone https://github.com/northriptl/saasi
     cd saasi
-    sudo bash saasi.sh
+    sudo bash saasi.sh -gui
   
 ## Direct Method
 
     wget https://raw.githubusercontent.com/northriptl/saasi/master/saasi.sh
-    sudo bash saasi.sh
+    sudo bash saasi.sh -gui
   
 # Update
 
