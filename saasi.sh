@@ -368,7 +368,7 @@ while test $# -gt 0; do
                 -h|--help)
                         echo "SAASI - Script Aimed At Securing Installs"
                         echo " "
-                        echo "options:"
+                        echo "usage:"
                         echo "-h, --help                show brief help"
                         echo "-terminal                 runs text only (not up to date)"
 			echo "-gui                      runs with gui (recommended)"
@@ -385,7 +385,13 @@ while test $# -gt 0; do
                         shift
                         ;;
                 *)
-                        break
+                        echo "SAASI - Script Aimed At Securing Installs"
+                        echo " "
+                        echo "usage:"
+                        echo "-h, --help                show brief help"
+                        echo "-terminal                 runs text only (not up to date)"
+			echo "-gui                      runs with gui (recommended)"
+                        exit 0
                         ;;
         esac
 done
