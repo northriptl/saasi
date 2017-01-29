@@ -148,20 +148,20 @@ install_rkhunter(){
 } #End install_rkhunter
 
 secure_fstab(){
-            echo "$LogTime uss: [$UserName] Check if shared memory is secured" >> $LogFile          
-            # Make sure fstab does not already contain a tmpfs reference
-            fstab=$(grep -c "tmpfs" /etc/fstab)
-            if [ ! "$fstab" -eq "0" ] 
-              then
-                 echo "$LogTime uss: [$UserName] fstab already contains a tmpfs partition." >> $LogFile
-            fi
-            if [ "$fstab" -eq "0" ]
-              then
-                 echo "$LogTime uss: [$UserName] fstab being updated to secure shared memory" >> $LogFile
-                 sudo echo "# $TFCName Script Entry - Secure Shared Memory - $LogTime" >> /etc/fstab
-                 sudo echo "tmpfs     /dev/shm     tmpfs     defaults,noexec,nosuid     0     0" >> /etc/fstab
-                 echo "$LogTime uss: [$UserName] Shared memory secured. Reboot required" >> $LogFile
-      	    fi
+	echo "$LogTime uss: [$UserName] Check if shared memory is secured" >> $LogFile          
+    # Make sure fstab does not already contain a tmpfs reference
+    fstab=$(grep -c "tmpfs" /etc/fstab)
+    if [ ! "$fstab" -eq "0" ] 
+    	then
+        	echo "$LogTime uss: [$UserName] fstab already contains a tmpfs partition." >> $LogFile
+        fi
+     if [ "$fstab" -eq "0" ]
+        then
+             echo "$LogTime uss: [$UserName] fstab being updated to secure shared memory" >> $LogFile
+             sudo echo "# $TFCName Script Entry - Secure Shared Memory - $LogTime" >> /etc/fstab
+             sudo echo "tmpfs     /dev/shm     tmpfs     defaults,noexec,nosuid     0     0" >> /etc/fstab
+             echo "$LogTime uss: [$UserName] Shared memory secured. Reboot required" >> $LogFile
+     	fi
   		
 } #End secure_fstab
 
@@ -192,12 +192,13 @@ terminal_only(){
 	printf "\nThe program will now do general security fixes\n"
 	printf "Press enter to continue"
 	read continue
-	
-	sysctl_fixes
-	firewall
-	remove_guest
+	echo "$LogTime [$UserName] * SAASI $Version - Install Log Started" >> $LogFile
+	sysctl_fixes >> $LogFile
+	firewall >> $LogFile
+	remove_guest >> $LogFile
 	
 	printf "\n"
+	
 	#Ask to do firewall test
 	while true 
 		do
@@ -215,7 +216,7 @@ terminal_only(){
 		do
     		read -p "Do you wish to remove unneeded/dangerous packages? y/n: " yn
     		case $yn in
-        		[Yy]* ) packages; break;;
+        		[Yy]* ) packages >> $LogFile; break;;
         		[Nn]* ) break;;
         		* ) echo "Please answer yes or no.";;
     		esac
@@ -227,7 +228,7 @@ terminal_only(){
 		do
     		read -p "Would you like to install macchanger (recommended)? y/n: " yn
     		case $yn in
-        		[Yy]* ) printf "\n"; mac_fix; break;;
+        		[Yy]* ) printf "\n"; mac_fix >> $LogFile; break;;
         		[Nn]* ) break;;
         		* ) echo "Please answer yes or no.";;
     		esac
@@ -239,7 +240,7 @@ terminal_only(){
 		do
     		read -p "Would you like to disable all usb ports (recommended only for VM)? y/n: " yn
     		case $yn in
-        		[Yy]* ) printf "\n"; usb_disable; break;;
+        		[Yy]* ) printf "\n"; usb_disable >> $LogFile; break;;
         		[Nn]* ) break;;
         		* ) echo "Please answer yes or no.";;
     		esac
@@ -251,12 +252,33 @@ terminal_only(){
 		do
     		read -p "Would you like to disable firewire? y/n: " yn
     		case $yn in
-        		[Yy]* ) printf "\n"; firewire_disable; break;;
+        		[Yy]* ) printf "\n"; firewire_disable >> $LogFile; break;;
         		[Nn]* ) break;;
         		* ) echo "Please answer yes or no.";;
     		esac
 	done
 	
+	while true 
+		do
+    		read -p "Would you like to install rkhunter? y/n: " yn
+    		case $yn in
+        		[Yy]* ) printf "\n"; install_rkhunter >> $LogFile; break;;
+        		[Nn]* ) break;;
+        		* ) echo "Please answer yes or no.";;
+    		esac
+	done
+	
+	while true 
+		do
+    		read -p "Would you like to secure shared memory (fstab)? y/n: " yn
+    		case $yn in
+        		[Yy]* ) printf "\n"; secure_fstab >> $LogFile; break;;
+        		[Nn]* ) break;;
+        		* ) echo "Please answer yes or no.";;
+    		esac
+	done
+	
+	echo "$LogTime [$UserName] * SAASI $Version - Install Log Ended" >> $LogFile
 	printf "\nScript exiting\nIt is strongly recommended to reboot after running this script\n"
 	
 } #End terminal_only
@@ -289,8 +311,7 @@ gui_plus(){
                 then
                     sysctl_fixes >> $LogFile
                 fi
-            
-            
+                        
         option=$(echo $response | grep -c "2.")
             if [ "$option" -eq "1" ]  
                 then
@@ -370,16 +391,16 @@ while test $# -gt 0; do
                         echo " "
                         echo "usage:"
                         echo "-h, --help                show brief help"
-                        echo "-terminal                 runs text only (not up to date)"
-			echo "-gui                      runs with gui (recommended)"
+                        echo "-t, --terminal            runs text only"
+						echo "-g, --gui                 runs with gui"
                         exit 0
                         ;;
-                -terminal)
+                -t|--terminal)
                         shift
                         terminal_only    
                         shift
                         ;;
-                -gui)
+                -g|--gui)
                         shift
                         gui_plus   
                         shift
@@ -389,8 +410,8 @@ while test $# -gt 0; do
                         echo " "
                         echo "usage:"
                         echo "-h, --help                show brief help"
-                        echo "-terminal                 runs text only (not up to date)"
-			echo "-gui                      runs with gui (recommended)"
+                        echo "-t, --terminal            runs text only"
+						echo "-g, --gui                 runs with gui"
                         exit 0
                         ;;
         esac
