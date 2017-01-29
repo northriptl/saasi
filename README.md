@@ -21,6 +21,8 @@ I recommend using git because I have included additional files in this repo that
   
 ## Direct Method
 
+Most of the script will still work, but some of the extra features of ufw will not be implemented without before.rules being downlaoded too.
+
     wget https://raw.githubusercontent.com/northriptl/saasi/master/saasi.sh
     sudo bash saasi.sh -gui
   
