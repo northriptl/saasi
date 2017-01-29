@@ -26,7 +26,12 @@ Most of the script will still work, but some of the extra features of ufw will n
     wget https://raw.githubusercontent.com/northriptl/saasi/master/saasi.sh
     sudo bash saasi.sh -gui
   
-# Update
+# Best Practices
+
+The best way to use this script it to create a new vm and install ubuntu from iso. Then update and upgrade the install, then use saasi for added security.
+  
+  
+# How to Update
 
     cd saasi
     git pull
