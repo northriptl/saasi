@@ -11,6 +11,12 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+Version="v0.2 alpha"
+UserName=$(whoami)
+LogDay=$(date '+%Y-%m-%d')
+LogTime=$(date '+%Y-%m-%d %H:%M:%S')
+LogFile=/var/log/saasi_$LogDay.log
+
 #DO NOT TOUCH THIS CODE
 #CONTAINS MAGIC
 greeter(){  
@@ -31,6 +37,8 @@ greeter(){
 }
 
 sysctl_fixes(){
+    echo "$LogTime uss: [$UserName] 1. Configure sysctl" >> $LogFile
+
 	#Kernel network security settings
 	sysctl -w net.ipv4.conf.default.rp_filter=1 
 	sysctl -w net.ipv4.conf.all.rp_filter=1 
@@ -47,26 +55,35 @@ sysctl_fixes(){
 } #End sysctl
 
 remove_guest(){
+    echo "$LogTime uss: [$UserName] 2. Remove guest account" >> $LogFile
 	#Remove the guest user by editing lightdm
 	sh -c 'printf "[SeatDefaults]\nallow-guest=false\n" > /etc/lightdm/lightdm.conf.d/50-no-guest.conf'
 } #End remove_guest
 
 mac_fix(){
-	read -p "please select yes when the install asks (press enter to continue)"
-	apt install macchanger macchanger-gtk -y
+    echo "$LogTime uss: [$UserName] 3. Install macchanger" >> $LogFile    
+    
+    zenity --warning --text "For best security, select yes when the install asks"
+	apt install macchanger macchanger-gtk -y 
 } #End mac_fix
 
 usb_disable(){
+    echo "$LogTime uss: [$UserName] 4. Disable usb ports" >> $LogFile    
+    
 	echo '2-1' | tee /sys/bus/usb/drivers/usb/unbind
 	echo "blacklist usb-storage" >> /etc/modprobe.d/blacklist.conf
 } #End usb_disable
 
 firewire_disable(){
+    echo "$LogTime uss: [$UserName] 5. Disable firewire port(s)" >> $LogFile
+
 	echo "blacklist firewire-ohci" >> /etc/modprobe.d/blacklist-firewire.conf
 	echo "blacklist firewire-sbp2" >> /etc/modprobe.d/blacklist-firewire.conf
 } #End firewire_disable
 
 firewall(){
+    echo "$LogTime uss: [$UserName] 6. Configure ufw firewall" >> $LogFile    
+    
 	#Reset the ufw config
 	ufw --force reset
 
@@ -105,6 +122,21 @@ firewall(){
 
 } #End Firewall
 
+packages(){
+    echo "$LogTime uss: [$UserName] 7. Remove packages" >> $LogFile
+
+	#Remove packages to improve security and shrink attack surface
+	#Firefox is not needed. TOR should be the only browser
+	#gcc g++ are removed to prevent code being compiled locally
+	#Cheese is removed to prevent easy access to webcam
+	#Yelp, Thunderbird, cups, yelp removed to reduce attack surface
+	#Vino removed since it is remote access software
+	#ftp, rsync, ssh, wget, curl removed to prevent easy downloading of files
+	apt -qq remove firefox vino yelp gcc g++ cheese thunderbird cups ftp rsync ssh wget curl -y
+	apt -qq autoremove -y
+
+} #End packages
+
 firewall_test(){
 	#The below code attempts to connect to a webpage via ports 80,81
 	#if the attempt fails, the print statement is executed. If the firewall
@@ -125,20 +157,7 @@ firewall_test(){
 
 } #End firewall_test
 
-packages(){
-	#Remove packages to improve security and shrink attack surface
-	#Firefox is not needed. TOR should be the only browser
-	#gcc g++ are removed to prevent code being compiled locally
-	#Cheese is removed to prevent easy access to webcam
-	#Yelp, Thunderbird, cups, yelp removed to reduce attack surface
-	#Vino removed since it is remote access software
-	#ftp, rsync, ssh, wget, curl removed to prevent easy downloading of files
-	apt -qq remove firefox vino yelp gcc g++ cheese thunderbird cups ftp rsync ssh wget curl -y
-	apt -qq autoremove -y
-
-} #End packages
-
-main(){
+terminal_only(){
 	greeter
 	
 	#Main functions
@@ -212,6 +231,87 @@ main(){
 	
 	printf "\nScript exiting\nIt is strongly recommended to reboot after running this script\n"
 	
-} #End main
+} #End terminal_only
 
-main
+gui_plus(){
+    response=$(zenity --list --checklist --title="SAASI $Version" --column=Boxes --column=Selections --text="Select the security features you want" --width 480 --height 550 \
+    FALSE " 1. Apply sysctl changes" \
+    FALSE " 2. Remove guest account" \
+    FALSE " 3. Install macchanger" \
+    FALSE " 4. Disable usb ports" \
+    FALSE " 5. Disable firewire" \
+    FALSE " 6. Install/configure ufw" \
+    FALSE " 7. Uninstall packages" \
+    FALSE " 8. Test firewall?" \
+    --separator=':')
+
+    if [ -z "$response" ] ; then
+       echo "No selection"
+       exit 1
+    fi
+
+    if [ ! "$response" = "" ] 
+      then
+        echo "$LogTime [$UserName] * SAASI $Version - Install Log Started" >> $LogFile
+        
+        option=$(echo $response | grep -c "1.")
+            if [ "$option" -eq "1" ]  
+                then
+                    sysctl_fixes >> $LogFile
+                fi
+            
+            
+        option=$(echo $response | grep -c "2.")
+            if [ "$option" -eq "1" ]  
+                then
+                    remove_guest >> $LogFile
+                fi
+            
+        
+        option=$(echo $response | grep -c "3.")
+            if [ "$option" -eq "1" ]  
+                then
+                    mac_fix >> $LogFile
+                fi
+                    
+            
+        option=$(echo $response | grep -c "4.")
+            if [ "$option" -eq "1" ]  
+                then
+                    usb_disable >> $LogFile
+                fi
+            
+            
+        option=$(echo $response | grep -c "5.")
+            if [ "$option" -eq "1" ]  
+                then
+                    firewire_disable >> $LogFile
+                fi
+            
+        
+        option=$(echo $response | grep -c "6.")
+            if [ "$option" -eq "1" ]  
+                then
+                    firewall >> $LogFile
+                fi
+            
+            
+        option=$(echo $response | grep -c "7.")
+            if [ "$option" -eq "1" ]  
+                then
+                    packages >> $LogFile
+                fi
+            
+            
+        option=$(echo $response | grep -c "8.")
+            if [ "$option" -eq "1" ]  
+                then
+                    firewall_test | zenity --text-info --title="Firewall Test" --width 400 --height 200
+                    echo "Firewall Test requested" >> $LogFile 
+                fi
+        #End option chain    
+        fi
+      
+    echo "$LogTime [$UserName] * SAASI $Version - Install Log Ended" >> $LogFile
+} #End gui_plus
+gui_plus
