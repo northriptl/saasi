@@ -370,7 +370,7 @@ while test $# -gt 0; do
                         echo " "
                         echo "options:"
                         echo "-h, --help                show brief help"
-                        echo "-terminal                 runs text only"
+                        echo "-terminal                 runs text only (not up to date)"
 			echo "-gui                      runs with gui (recommended)"
                         exit 0
                         ;;
