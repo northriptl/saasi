@@ -5,12 +5,6 @@
 #while running TOR and tests the connection. Run using sudo
 #DO NOT RUN AS ROOT!! USE SUDO
 
-# Check for root priviliges
-if [[ $EUID -ne 0 ]]; then
-   printf "Please run as root:\nsudo %s\n" "${0}"
-   exit 1
-fi
-
 Version="v0.2 alpha"
 UserName=$(whoami)
 LogDay=$(date '+%Y-%m-%d')
@@ -362,4 +356,36 @@ gui_plus(){
       
     echo "$LogTime [$UserName] * SAASI $Version - Install Log Ended" >> $LogFile
 } #End gui_plus
-gui_plus
+
+# Check for root priviliges
+if [[ $EUID -ne 0 ]]; then
+   printf "Please run as root:\nsudo bash %s\n" "${0}"
+   exit 1
+fi
+
+while test $# -gt 0; do
+        case "$1" in
+                -h|--help)
+                        echo "SAASI - Script Aimed At Securing Installs"
+                        echo " "
+                        echo "options:"
+                        echo "-h, --help                show brief help"
+                        echo "-terminal                 runs text only"
+			echo "-gui                      runs with gui (recommended)"
+                        exit 0
+                        ;;
+                -terminal)
+                        shift
+                        terminal_only    
+                        shift
+                        ;;
+                -gui)
+                        shift
+                        gui_plus   
+                        shift
+                        ;;
+                *)
+                        break
+                        ;;
+        esac
+done
