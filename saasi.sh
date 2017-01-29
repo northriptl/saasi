@@ -5,7 +5,7 @@
 #while running TOR and tests the connection. Run using sudo
 #DO NOT RUN AS ROOT!! USE SUDO
 
-Version="v0.2 alpha"
+Version="v0.3 alpha"
 UserName=$(whoami)
 LogDay=$(date '+%Y-%m-%d')
 LogTime=$(date '+%Y-%m-%d %H:%M:%S')
