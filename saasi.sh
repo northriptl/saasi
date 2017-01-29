@@ -37,7 +37,7 @@ greeter(){
 }
 
 sysctl_fixes(){
-    echo "$LogTime uss: [$UserName] 1. Configure sysctl" >> $LogFile
+    echo "$LogTime uss: [$UserName] 1. Configure sysctl"
 
 	#Kernel network security settings
 	sysctl -w net.ipv4.conf.default.rp_filter=1 
@@ -55,34 +55,34 @@ sysctl_fixes(){
 } #End sysctl
 
 remove_guest(){
-    echo "$LogTime uss: [$UserName] 2. Remove guest account" >> $LogFile
+    echo "$LogTime uss: [$UserName] 2. Remove guest account" 
 	#Remove the guest user by editing lightdm
 	sh -c 'printf "[SeatDefaults]\nallow-guest=false\n" > /etc/lightdm/lightdm.conf.d/50-no-guest.conf'
 } #End remove_guest
 
 mac_fix(){
-    echo "$LogTime uss: [$UserName] 3. Install macchanger" >> $LogFile    
+    echo "$LogTime uss: [$UserName] 3. Install macchanger"    
     
     zenity --warning --text "For best security, select yes when the install asks"
 	apt install macchanger macchanger-gtk -y 
 } #End mac_fix
 
 usb_disable(){
-    echo "$LogTime uss: [$UserName] 4. Disable usb ports" >> $LogFile    
+    echo "$LogTime uss: [$UserName] 4. Disable usb ports"     
     
 	echo '2-1' | tee /sys/bus/usb/drivers/usb/unbind
 	echo "blacklist usb-storage" >> /etc/modprobe.d/blacklist.conf
 } #End usb_disable
 
 firewire_disable(){
-    echo "$LogTime uss: [$UserName] 5. Disable firewire port(s)" >> $LogFile
+    echo "$LogTime uss: [$UserName] 5. Disable firewire port(s)" 
 
 	echo "blacklist firewire-ohci" >> /etc/modprobe.d/blacklist-firewire.conf
 	echo "blacklist firewire-sbp2" >> /etc/modprobe.d/blacklist-firewire.conf
 } #End firewire_disable
 
 firewall(){
-    echo "$LogTime uss: [$UserName] 6. Configure ufw firewall" >> $LogFile    
+    echo "$LogTime uss: [$UserName] 6. Configure ufw firewall"     
     
 	#Reset the ufw config
 	ufw --force reset
@@ -123,7 +123,7 @@ firewall(){
 } #End Firewall
 
 packages(){
-    echo "$LogTime uss: [$UserName] 7. Remove packages" >> $LogFile
+    echo "$LogTime uss: [$UserName] 7. Remove packages"
 
 	#Remove packages to improve security and shrink attack surface
 	#Firefox is not needed. TOR should be the only browser
@@ -136,6 +136,22 @@ packages(){
 	apt -qq autoremove -y
 
 } #End packages
+
+install_rkhunter(){
+    echo "$LogTime uss: [$UserName] 8. Configure rkhunter" >> $LogFile
+    apt install -qq rkhunter -y >> $LogFile | zenity --progress --title="RKHunter - SAASI $Version" --text="Downloading updates..." --width 400 --auto-close --percentage=25
+    rkhunter --update 2>&1 >> $LogFile | zenity --progress --title="RKHunter - SAASI $Version" --text="Downloading updates..." --width 400 --auto-close --percentage=50
+    rkhunter --propupd 2>&1 >> $LogFile | zenity --progress --title="RKHunter - SAASI $Version" --text="Updating properties..." --width 400 --auto-close --percentage=75
+    
+    zenity --question --title "RKHunter - SAASI $Version" --text "Would you like to run a RKHunter check now?"
+        if [ "$?" -eq "0" ]
+            then
+        	    # Run RKHunter check and output to Zenity         
+                sudo rkhunter --check --nocolors --skip-keypress 2>&1 | zenity --text-info --title "RKHunter - SAASI $Version" --width 600 --height 400
+                echo "# RKHunter check done"
+                echo "$LogTime uss: [$UserName] RKHunter check done"      
+            fi
+} #End install_rkhunter
 
 firewall_test(){
 	#The below code attempts to connect to a webpage via ports 80,81
@@ -242,7 +258,8 @@ gui_plus(){
     FALSE " 5. Disable firewire" \
     FALSE " 6. Install/configure ufw" \
     FALSE " 7. Uninstall packages" \
-    FALSE " 8. Test firewall?" \
+    FALSE " 8. Install rkhunter" \
+    FALSE " 9. Test firewall?" \
     --separator=':')
 
     if [ -z "$response" ] ; then
@@ -301,9 +318,13 @@ gui_plus(){
                 then
                     packages >> $LogFile
                 fi
-            
-            
         option=$(echo $response | grep -c "8.")
+	    	if [ "$option" -eq "1"]
+	    		then
+		    		#logging done inside function
+		    		install_rkhunter
+            	fi
+        option=$(echo $response | grep -c "9.")
             if [ "$option" -eq "1" ]  
                 then
                     firewall_test | zenity --text-info --title="Firewall Test" --width 400 --height 200
