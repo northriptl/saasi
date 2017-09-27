@@ -126,8 +126,8 @@ packages(){
 	#Yelp, Thunderbird, cups, yelp removed to reduce attack surface
 	#Vino removed since it is remote access software
 	#ftp, rsync, ssh, wget, curl removed to prevent easy downloading of files
-	apt -qq remove firefox vino yelp gcc g++ cheese thunderbird cups ftp rsync ssh wget curl -y
-	apt -qq autoremove -y
+	apt remove firefox vino yelp gcc g++ cheese thunderbird cups ftp rsync ssh curl -y
+	apt autoremove -y
 
 } #End packages
 
