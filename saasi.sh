@@ -127,6 +127,8 @@ packages(){
 	#Vino removed since it is remote access software
 	#ftp, rsync, ssh, wget, curl removed to prevent easy downloading of files
 	apt remove firefox vino yelp gcc g++ cheese thunderbird cups ftp rsync ssh curl -y
+	apt remove telnet openvpn cups aisleriot gnome-mahjongg gnome-mines gnome-sudoku -y
+	apt remove pulseaudio netcat-openbsd tcpdump transission-common libreoffice-common -y
 	apt autoremove -y
 
 } #End packages
